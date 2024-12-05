@@ -1,11 +1,14 @@
 import re
 from dataclasses import dataclass
 
+from dataclasses import dataclass
+
 @dataclass
 class SrtLine:
     start_time: float  # Tempo de início em segundos
     end_time: float    # Tempo de fim em segundos
     text: str          # Texto da legenda
+    used: bool = False  # Flag para indicar se a linha foi usada
 
 def parse_srt_file(file_path):
     """

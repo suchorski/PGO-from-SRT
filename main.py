@@ -57,16 +57,19 @@ def update_segments_with_srt(pgo_content, srt_lines, fps):
     """
     for voice in pgo_content.voices:
         for segment in voice.segments:
-            # Procurar o texto no SRT
-            matching_lines = [line for line in srt_lines if line.text == segment.text]
+            # Procurar o texto no SRT, mas ignorar linhas já usadas
+            matching_lines = [line for line in srt_lines if line.text == segment.text and not line.used]
             if not matching_lines:
-                print(f"Texto não encontrado no SRT: {segment.text}")
+                print(f"Texto não encontrado no SRT ou já usado: {segment.text}")
                 continue
 
+            # Usar a primeira linha correspondente e marcá-la como usada
+            srt_line = matching_lines[0]
+            srt_line.used = True
+
             # Atualizar start_frame e end_frame
-            srt_index = srt_lines.index(matching_lines[0])
-            segment.start_frame = int(srt_lines[srt_index].start_time * fps)
-            segment.end_frame = int(srt_lines[srt_index].end_time * fps)
+            segment.start_frame = int(srt_line.start_time * fps)
+            segment.end_frame = int(srt_line.end_time * fps)
 
             # Ajustar os frames das palavras
             adjust_words_in_segment(segment)
